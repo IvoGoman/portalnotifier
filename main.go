@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	login "github.com/ivogoman/portalnotifier/login"
-	"github.com/ivogoman/portalnotifier/util"
+	"github.com/IvoGoman/portalnotifier/html"
+	login "github.com/IvoGoman/portalnotifier/login"
+	"github.com/IvoGoman/portalnotifier/util"
 )
 
 type cfg map[string]string
@@ -19,7 +20,7 @@ var gradesKnown = login.GetGrades(config)
 func main() {
 	// database.CreateDB()
 
-	go util.Serve()
+	html.Serve(config)
 	grades := login.GetGrades(config)
 	for k := range gradesKnown {
 		delete(grades, k)

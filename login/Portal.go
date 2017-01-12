@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ivogoman/portalnotifier/util"
+	"github.com/IvoGoman/portalnotifier/util"
 
 	"gopkg.in/xmlpath.v2"
 )
