@@ -2,69 +2,40 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"strconv"
 
-	"net/http"
-
-	"github.com/ivogoman/portalnotifier/database"
 	login "github.com/ivogoman/portalnotifier/login"
 	"github.com/ivogoman/portalnotifier/util"
 )
 
 type cfg map[string]string
 
-func grades(res http.ResponseWriter, req *http.Request) {
-	gradesKnown := database.SelectGrades()
-	// sort.Sort(ByName(gradesKnown))
-	res.Header().Set(
-		"Content-Type",
-		"text/html",
-	)
-	response := `<DOCTYPE html>
-		<html>
-			<head>
-				<title> Grades </title>
-			</head>
-			<body>
-				<table>
-					<tr>
-						<th> Module </th>
-						<th> Grade </th>
-						<th> Bonus </th>
-					</tr>`
-	for _, grade := range gradesKnown {
-		response += `<tr>
-						<td>` + grade.Name + `</td>
-						<td>` + strconv.FormatFloat(grade.Grade, 'f', 2, 64) + `</td>
-						<td>` + strconv.FormatFloat(grade.Bonus, 'f', 0, 64) + `</td>`
-	}
-	response += `<tr>
-				<th></th>
-				<th>Average</th>
-				<th>` + strconv.FormatFloat(util.CalculateAverage(gradesKnown), 'f', 2, 64) + `</th>
-				</table>
-				</body>
-				</html>`
-	io.WriteString(
-		res,
-		response)
+var config = util.LoadConfig("./config.yml")
 
-}
+var gradesKnown = login.GetGrades(config)
+
+// var gradesKnown = make(map[string]util.Module)
 
 func main() {
-	database.CreateDB()
-	http.HandleFunc("/grades", grades)
-	http.ListenAndServe(":8080", nil)
-	gradesKnown := database.SelectGrades()
-	grades := login.GetGrades("./config.yml")
+	// database.CreateDB()
+
+	go util.Serve()
+	grades := login.GetGrades(config)
 	for k := range gradesKnown {
 		delete(grades, k)
 	}
 	if len(grades) > 0 {
 		fmt.Println("There are " + strconv.Itoa(len(grades)) + " new grades")
-		database.StoreGrades(grades)
-		gradesKnown = database.SelectGrades()
+		// database.StoreGrades(grades)
+		// status := util.SendMail(config, grades)
+
+		// if status == false {
+		// 	fmt.Println("Mail not send")
+		// } else {
+		// 	fmt.Println("Mail send")
+		// }
+
+		gradesKnown = login.GetGrades(config)
 		fmt.Println(util.CalculateAverage(gradesKnown))
 
 	} else {

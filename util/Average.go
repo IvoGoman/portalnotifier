@@ -4,6 +4,7 @@ import (
 	"math"
 )
 
+// CalculateAverage returns the Average Grade
 func CalculateAverage(grades map[string]Module) float64 {
 	var teamprojekt Module
 	// var thesis Module
@@ -35,6 +36,8 @@ func CalculateAverage(grades map[string]Module) float64 {
 		} else if 140000 < v.ExamID && v.ExamID < 140900 {
 			// fmt.Println("BWL Fundamental " + v.Name)
 			mmmFundamentals = append(mmmFundamentals, v)
+		} else if 170000 < v.ExamID && v.ExamID < 170999 {
+			specs = append(specs, v)
 		}
 	}
 	grade += teamprojekt.Grade * teamprojekt.Bonus
@@ -57,6 +60,7 @@ func CalculateAverage(grades map[string]Module) float64 {
 	return truncate(grade/credits, 2)
 }
 
+// AverageGroup returns the average grade per module group
 func AverageGroup(grades ...Module) (credits, average float64) {
 	var grade float64
 	for _, v := range grades {

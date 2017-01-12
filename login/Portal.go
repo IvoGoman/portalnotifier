@@ -13,11 +13,7 @@ import (
 	"github.com/ivogoman/portalnotifier/util"
 
 	"gopkg.in/xmlpath.v2"
-	"gopkg.in/yaml.v2"
 )
-
-// Cfg stores the config parameters
-type Cfg map[string]string
 
 var httpclient = http.Client{
 	CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -28,7 +24,7 @@ var httpclient = http.Client{
 type portalClient struct {
 	http        http.Client
 	jar         CookieJar
-	config      Cfg
+	config      map[string]string
 	loginTicket string
 	execution   string
 }
@@ -42,22 +38,13 @@ const examTableHeaderRow = "//tr[@bgcolor='#003366' and 2]"
 const examTableGradeRowXPath = "//tr[@bgcolor='#EFEFEF']"
 
 // DoLogin logs the http client into cas
-func GetGrades(configsrc string) map[string]util.Module {
-	config := LoadConfig(configsrc)
+func GetGrades(config map[string]string) map[string]util.Module {
 	client := new(portalClient)
 	client.config = config
 	client.loginPortal()
 	grades := client.crawlPortal()
 	client.getPage(config["logout"], false)
 	return grades
-}
-
-// LoadConfig loads config from file
-func LoadConfig(config string) Cfg {
-	content := make(Cfg)
-	raw, _ := ioutil.ReadFile(config)
-	yaml.Unmarshal(raw, &content)
-	return content
 }
 
 func (client *portalClient) loginPortal() {

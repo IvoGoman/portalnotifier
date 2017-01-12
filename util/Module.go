@@ -14,7 +14,18 @@ type Module struct {
 	Status          string
 	TryCountStudent string
 }
+
+// ByName sorts the Modules by their name
 type ByName []Module
+
+// ModuleMapToArray returns an Array that can be used for sorting the modules
+func ModuleMapToArray(moduleMap map[string]Module) (array []Module) {
+	// array := make([]Module, 0)
+	for _, m := range moduleMap {
+		array = append(array, m)
+	}
+	return
+}
 
 func (md ByName) Len() int {
 	return len(md)
