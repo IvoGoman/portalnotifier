@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/ivogoman/portalnotifier/util"
+	"github.com/IvoGoman/portalnotifier/util"
 	_ "github.com/mattn/go-sqlite3"
 )
 
