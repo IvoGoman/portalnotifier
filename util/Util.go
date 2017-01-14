@@ -11,15 +11,17 @@ import (
 func SendMail(config map[string]string, moduleMap map[string]Module) (status bool) {
 	mailAuth := smtp.PlainAuth("", config["mailfrom"], config["password"], config["mailserver"])
 	mailTo := []string{config["mailto"]}
-	msg := []byte("To: " + config["mailto"] + "\r\n" +
+	msg := []byte("From: " + config["mailfrom"] + "\r\n" +
+		"To: " + config["mailto"] + "\r\n" +
 		"Subject: You have new Grades\r\n" +
 		"\r\n" +
 		"Hello World\r\n")
-	err := smtp.SendMail(config["mailserver"]+":"+config["mailport"], mailAuth, config["mailFrom"], mailTo, msg)
+	err := smtp.SendMail(config["mailserver"]+":"+config["port"], mailAuth, config["mailFrom"], mailTo, msg)
 	if err != nil {
 		log.Fatal(err)
 		return false
 	}
+
 	return true
 }
 
