@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	"fmt"
-
 	"github.com/IvoGoman/portalnotifier/database"
 	"github.com/IvoGoman/portalnotifier/login"
 	"github.com/IvoGoman/portalnotifier/util"
@@ -22,19 +20,19 @@ var gradesKnown = make(map[string]util.Module)
 
 func main() {
 	database.CreateDB()
+	gradesKnown = database.SelectGrades()
 	interval, _ := strconv.Atoi(config["interval"])
 	go html.Serve(config)
-	grades := login.GetGrades(config)
-	gradeTicker := time.NewTicker(time.Minute * time.Duration(interval))
+	gradeTicker := time.NewTicker(time.Millisecond * time.Duration(interval))
 	for t := range gradeTicker.C {
-		fmt.Println(t)
+		grades := login.GetGrades(config)
 		for k := range gradesKnown {
 			delete(grades, k)
 		}
 		if len(grades) > 0 {
 			database.StoreGrades(grades)
-			gradesKnown = login.GetGrades(config)
-			util.SendMail(config, grades)
+			gradesKnown = database.SelectGrades()
+			util.SendMail(config, grades, util.CalculateAverage(gradesKnown))
 		}
 	}
 }

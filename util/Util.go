@@ -4,19 +4,24 @@ import (
 	"io/ioutil"
 	"log"
 	"net/smtp"
+	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
-func SendMail(config map[string]string, moduleMap map[string]Module) (status bool) {
+func SendMail(config map[string]string, moduleMap map[string]Module, average float64) (status bool) {
 	mailAuth := smtp.PlainAuth("", config["mailfrom"], config["password"], config["mailserver"])
 	mailTo := []string{config["mailto"]}
-	msg := []byte("From: " + config["mailfrom"] + "\r\n" +
+	msg := "From: " + config["mailfrom"] + "\r\n" +
 		"To: " + config["mailto"] + "\r\n" +
 		"Subject: You have new Grades\r\n" +
-		"\r\n" +
-		"Hello World\r\n")
-	err := smtp.SendMail(config["mailserver"]+":"+config["port"], mailAuth, config["mailFrom"], mailTo, msg)
+		"\r\n"
+	for _, grade := range moduleMap {
+		msg += "You got a " + strconv.FormatFloat(grade.Grade, 'f', 2, 64) + " in " + grade.Name + "\r\n"
+	}
+
+	msg += strconv.FormatFloat(average, 'f', 2, 64) + " is your new average. \r\n"
+	err := smtp.SendMail(config["mailserver"]+":"+config["port"], mailAuth, config["mailFrom"], mailTo, []byte(msg))
 	if err != nil {
 		log.Fatal(err)
 		return false
