@@ -5,6 +5,11 @@ exam: 'https://portal.uni-mannheim.de/qisserver/rds?state=user&type=8&topitem=pr
 login: 'https://cas.uni-mannheim.de/cas/login?service=https%3A%2F%2Fportal2.uni-mannheim.de/portal2/rds%3Fstate%3Duser%26type%3D1'
 logout: 'https://portal.uni-mannheim.de/qisserver/rds?state=user&type=4&re=last&category=auth.logout&breadCrumbSource=portal'
 portal: 'https://portal.uni-mannheim.de'
+mailserver: 'smtp.mail.uni-mannheim.de'
+port: '25'
 #user credentials
 username: username
 password: password
+mailfrom: mailaddress@mail.uni-mannheim.de
+mailto: mailaddress@example.de
+interval: '10'
