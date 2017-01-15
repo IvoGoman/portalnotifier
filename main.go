@@ -10,29 +10,33 @@ import (
 	"github.com/ivogoman/portalnotifier/html"
 )
 
-type cfg map[string]string
-
 var config = util.LoadConfig("./config.yml")
 
 var gradesKnown = make(map[string]util.Module)
-
-// var gradesKnown = make(map[string]util.Module)
 
 func main() {
 	database.CreateDB()
 	gradesKnown = database.SelectGrades()
 	interval, _ := strconv.Atoi(config["interval"])
 	go html.Serve(config)
-	gradeTicker := time.NewTicker(time.Millisecond * time.Duration(interval))
+	grades := login.GetGrades(config)
+	checkGrades(gradesKnown, grades)	
+	gradeTicker := time.NewTicker(time.Minute * time.Duration(interval))
 	for t := range gradeTicker.C {
-		grades := login.GetGrades(config)
-		for k := range gradesKnown {
-			delete(grades, k)
-		}
-		if len(grades) > 0 {
-			database.StoreGrades(grades)
-			gradesKnown = database.SelectGrades()
-			util.SendMail(config, grades, util.CalculateAverage(gradesKnown))
-		}
+		checkGrades(gradesKnown, grades)
 	}
+}
+
+func checkGrades(known map[string]util.Module, current map[string]util.Module){
+		for k := range known {
+			delete(current, k)
+		}
+		if len(current) > 0 {
+			database.StoreGrades(current)
+			known = database.SelectGrades()
+			current := login.GetGrades(config)
+			util.SendMail(config, current, util.CalculateAverage(known))
+
+		}
+
 }
