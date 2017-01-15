@@ -20,23 +20,23 @@ func main() {
 	interval, _ := strconv.Atoi(config["interval"])
 	go html.Serve(config)
 	grades := login.GetGrades(config)
-	checkGrades(gradesKnown, grades)	
+	checkGrades(gradesKnown, grades)
 	gradeTicker := time.NewTicker(time.Minute * time.Duration(interval))
-	for t := range gradeTicker.C {
+	for _ = range gradeTicker.C {
+		grades := login.GetGrades(config)
 		checkGrades(gradesKnown, grades)
 	}
 }
 
-func checkGrades(known map[string]util.Module, current map[string]util.Module){
-		for k := range known {
-			delete(current, k)
-		}
-		if len(current) > 0 {
-			database.StoreGrades(current)
-			known = database.SelectGrades()
-			current := login.GetGrades(config)
-			util.SendMail(config, current, util.CalculateAverage(known))
+func checkGrades(known map[string]util.Module, current map[string]util.Module) {
+	for k := range known {
+		delete(current, k)
+	}
+	if len(current) > 0 {
+		database.StoreGrades(current)
+		known = database.SelectGrades()
+		util.SendMail(config, current, util.CalculateAverage(known))
 
-		}
+	}
 
 }
