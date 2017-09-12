@@ -186,7 +186,7 @@ func (client *portalClient) processRow(rows *xmlpath.Iter, grades map[string]uti
 		exam.Prof = split[5]
 		exam.Form = split[6]
 		exam.Grade, _ = strconv.ParseFloat(strings.Replace(strings.TrimSpace(split[7]), ",", ".", -1), 64)
-		patternBonus := regexp.MustCompile("[1-9]+.0")
+		patternBonus := regexp.MustCompile("[0-9]+.0")
 		bonus := patternBonus.FindAllString(split[8], 1)[0]
 		exam.Bonus, _ = strconv.ParseFloat(strings.TrimSpace(bonus), 64)
 		exam.Status = split[9]
