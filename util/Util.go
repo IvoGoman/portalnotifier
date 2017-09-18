@@ -33,7 +33,10 @@ func SendMail(config map[string]string, moduleMap map[string]Module, average flo
 // LoadConfig loads config from file
 func LoadConfig(config string) map[string]string {
 	content := make(map[string]string)
-	raw, _ := ioutil.ReadFile(config)
+	raw, err := ioutil.ReadFile(config)
+	if err != nil {
+		log.Fatal(err)
+	}
 	yaml.Unmarshal(raw, &content)
 	return content
 }
