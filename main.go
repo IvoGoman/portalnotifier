@@ -7,7 +7,7 @@ import (
 	"github.com/IvoGoman/portalnotifier/database"
 	"github.com/IvoGoman/portalnotifier/login"
 	"github.com/IvoGoman/portalnotifier/util"
-	"github.com/ivogoman/portalnotifier/html"
+	"github.com/IvoGoman/portalnotifier/html"
 )
 
 var config = util.LoadConfig("./config.yml")
