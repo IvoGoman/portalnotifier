@@ -7,10 +7,17 @@ import (
 	"github.com/IvoGoman/portalnotifier/database"
 	"github.com/IvoGoman/portalnotifier/login"
 	"github.com/IvoGoman/portalnotifier/util"
-	"github.com/ivogoman/portalnotifier/html"
+	"github.com/IvoGoman/portalnotifier/html"
+	"os"
 )
 
-var config = util.LoadConfig("./config.yml")
+var path, _ = os.Getwd()
+
+var configPath = path + "/portalnotifier/config.yml"
+
+
+var config = util.LoadConfig(configPath)
+
 
 var gradesKnown = make(map[string]util.Module)
 
@@ -22,7 +29,7 @@ func main() {
 	grades := login.GetGrades(config)
 	checkGrades(gradesKnown, grades)
 	gradeTicker := time.NewTicker(time.Minute * time.Duration(interval))
-	for _ = range gradeTicker.C {
+	for range gradeTicker.C {
 		grades := login.GetGrades(config)
 		checkGrades(gradesKnown, grades)
 	}

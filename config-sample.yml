@@ -1,5 +1,5 @@
 server: "https://cas.uni-mannheim.de/cas/login"
-service: 'https://portal.uni-mannheim.de/qisserver/rds?state=user&type=1'
+service: 'https://portal.uni-mannheim.de/qisserver/rds?state=user&type=0'
 tor: 'https://portal.uni-mannheim.de/qisserver/rds?state=htmlbesch&moduleParameter=Student&menu_open=n&navigationPosition=pruefungen%2Cnotenspiegel&breadcrumb=notenspiegel&topitem=pruefungen&subitem=notenspiegel'
 exam: 'https://portal.uni-mannheim.de/qisserver/rds?state=user&type=8&topitem=pruefungen&breadCrumbSource=portal'
 login: 'https://cas.uni-mannheim.de/cas/login?service=https%3A%2F%2Fportal2.uni-mannheim.de/portal2/rds%3Fstate%3Duser%26type%3D1'
@@ -13,3 +13,6 @@ password: password
 mailfrom: mailaddress@mail.uni-mannheim.de
 mailto: mailaddress@example.de
 interval: '10'
+
+#user-agent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36"
+user-agent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36"

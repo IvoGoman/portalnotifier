@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
 	"github.com/IvoGoman/portalnotifier/util"
 
 	"gopkg.in/xmlpath.v2"
@@ -60,14 +59,16 @@ func (client *portalClient) loginPortal() {
 
 func (client *portalClient) crawlPortal() map[string]util.Module {
 	config := client.config
-	// do a get on the "login" to get the session aknowledged
 	req, _ := http.NewRequest("GET", config["server"], nil)
 	values := req.URL.Query()
 	values.Add("service", client.config["service"])
 	req.URL.RawQuery = values.Encode()
 	req.Header.Add("Cookie", client.jar.Encode())
-	req.Header.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0")
-	res, _ := client.http.Do(req)
+	req.Header.Add("User-Agent", client.config["user-agent"])
+	res, err := client.http.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer res.Body.Close()
 	bytes, _ := ioutil.ReadAll(res.Body)
 	portalpage := string(bytes)
@@ -93,7 +94,7 @@ func (client *portalClient) getPage(url string, cookie bool) (htmlString string)
 	if cookie {
 		req.Header.Add("Cookie", client.jar.Encode())
 	}
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36")
+	req.Header.Add("User-Agent", client.config["user-agent"])
 
 	page, err := client.http.Do(req)
 	if err != nil {
@@ -148,7 +149,7 @@ func (client *portalClient) authenticate() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36")
+	req.Header.Add("User-Agent", client.config["user-agent"])
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 	req.Header.Add("Cookie", client.jar.Encode())
