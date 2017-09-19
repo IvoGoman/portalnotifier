@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/IvoGoman/portalnotifier/login"
+	"github.com/IvoGoman/portalnotifier/database"
 	"github.com/IvoGoman/portalnotifier/util"
 )
 
@@ -16,11 +16,13 @@ var config = make(map[string]string)
 func Serve(cfg map[string]string) {
 	config = cfg
 	http.HandleFunc("/grades", grades)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+config["serverport"], nil)
 }
+
+// Creates the plain html table that represents the grades
 func grades(res http.ResponseWriter, req *http.Request) {
-	gradesCurrent := login.GetGrades(config)
-	grades := util.ModuleMapToArray(gradesCurrent)
+	gradesKnown := database.SelectGrades()
+	grades := util.ModuleMapToArray(gradesKnown)
 	sort.Sort(util.ByName(grades))
 	// sort.Sort(ByName(gradesKnown))
 	res.Header().Set(
@@ -48,7 +50,7 @@ func grades(res http.ResponseWriter, req *http.Request) {
 	response += `<tr>
 				<th></th>
 				<th>Average</th>
-				<th>` + strconv.FormatFloat(util.CalculateAverage(gradesCurrent), 'f', 2, 64) + `</th>
+				<th>` + strconv.FormatFloat(util.CalculateAverage(gradesKnown), 'f', 2, 64) + `</th>
 				</table>
 				</body>
 				</html>`

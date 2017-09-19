@@ -47,6 +47,7 @@ func GetGrades(config map[string]string) map[string]util.Module {
 	return grades
 }
 
+// Method retrieves necessary data for the portal login
 func (client *portalClient) loginPortal() {
 	config := client.config
 	// retrieve login information from cas login page
@@ -83,6 +84,7 @@ func (client *portalClient) crawlPortal() map[string]util.Module {
 	return grades
 }
 
+// Method to download a page with or without cookies
 func (client *portalClient) getPage(url string, cookie bool) (htmlString string) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -107,6 +109,7 @@ func (client *portalClient) getPage(url string, cookie bool) (htmlString string)
 	return
 }
 
+// Given an HTML String and an XPath Expression the matching data is returned
 func (client *portalClient) getData(htmlString string, xpath string) (val string) {
 	xml, err := xmlpath.ParseHTML(strings.NewReader(htmlString))
 	if err != nil {
@@ -114,11 +117,12 @@ func (client *portalClient) getData(htmlString string, xpath string) (val string
 	}
 	path := xmlpath.MustCompile(xpath)
 	if value, ok := path.String(xml); ok {
-		// fmt.Println(value)
 		val = value
 	}
 	return
 }
+
+// Given an HTML String and an XPath Expression the matching node is returned
 func (client *portalClient) getDataNode(htmlString string, xpath string) (val *xmlpath.Iter) {
 	xml, err := xmlpath.ParseHTML(strings.NewReader(htmlString))
 	if err != nil {
@@ -129,6 +133,7 @@ func (client *portalClient) getDataNode(htmlString string, xpath string) (val *x
 	return
 }
 
+// Mirrors the actual authentication process on the Portal2 Homepage via CAS
 func (client *portalClient) authenticate() {
 	config := client.config
 	data := url.Values{}
@@ -155,6 +160,7 @@ func (client *portalClient) authenticate() {
 	client.jar.Update(resp.Cookies())
 }
 
+// Process the Table containing all the Grades
 func (client *portalClient) processTable(table *xmlpath.Iter) (grades map[string]util.Module) {
 	grades = make(map[string]util.Module)
 	if table.Next() {
@@ -166,6 +172,7 @@ func (client *portalClient) processTable(table *xmlpath.Iter) (grades map[string
 	return
 }
 
+// Process a single row in the grades table and extract all fields
 func (client *portalClient) processRow(rows *xmlpath.Iter, grades map[string]util.Module) map[string]util.Module {
 	if rows.Next() {
 		rowstring := rows.Node().String()

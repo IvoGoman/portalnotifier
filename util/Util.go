@@ -9,6 +9,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Sends a mail to the user with the new grades and their average grade
 func SendMail(config map[string]string, moduleMap map[string]Module, average float64) (status bool) {
 	mailAuth := smtp.PlainAuth("", config["mailfrom"], config["password"], config["mailserver"])
 	mailTo := []string{config["mailto"]}
